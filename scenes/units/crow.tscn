@@ -1,0 +1,177 @@
+[gd_scene load_steps=8 format=3 uid="uid://cnev86xn63wld"]
+
+[ext_resource type="Script" path="res://sripts/crow.gd" id="1_1t1jc"]
+[ext_resource type="Texture2D" uid="uid://pnputqsqprxm" path="res://assets/textures/units/crow/crow_sprite_sheet.png" id="2_mxw1n"]
+
+[sub_resource type="Animation" id="Animation_p2pp0"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CrowSprite:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("2_mxw1n")]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CrowSprite:hframes")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [2]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("CrowSprite:vframes")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [2]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("CrowSprite:frame")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="Animation" id="Animation_ed5d8"]
+resource_name = "crow_flying"
+length = 0.3
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CrowSprite:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("2_mxw1n")]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CrowSprite:hframes")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [2]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("CrowSprite:vframes")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [2]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("CrowSprite:frame")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.15),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [0, 1]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ncxty"]
+_data = {
+"RESET": SubResource("Animation_p2pp0"),
+"crow_flying": SubResource("Animation_ed5d8")
+}
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_mj74e"]
+radius = 3.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_rfmet"]
+radius = 30.0
+
+[node name="Crow" type="CharacterBody2D" groups=["Crows"]]
+top_level = true
+visibility_layer = 16
+z_index = 2
+collision_layer = 16
+collision_mask = 8
+motion_mode = 1
+script = ExtResource("1_1t1jc")
+
+[node name="CrowSprite" type="Sprite2D" parent="."]
+rotation = 1.5708
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_mxw1n")
+hframes = 2
+vframes = 2
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_ncxty")
+}
+
+[node name="CollisionBody" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_mj74e")
+disabled = true
+
+[node name="NeigbourRadius" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_rfmet")
+disabled = true
+
+[node name="WanderTimer" type="Timer" parent="."]
+autostart = true
+
+[node name="WanderLine" type="Line2D" parent="."]
+visible = false
+points = PackedVector2Array(0, 0, 5, 0)
+width = 0.1
+
+[node name="CohesionLine" type="Line2D" parent="."]
+visible = false
+points = PackedVector2Array(0, 0, 5, 0)
+width = 0.1
+default_color = Color(0.0235294, 0.364706, 0, 1)
+
+[node name="AlignmentLine" type="Line2D" parent="."]
+visible = false
+points = PackedVector2Array(0, 0, 5, 0)
+width = 0.1
+default_color = Color(1, 0.329412, 0.0313726, 1)
+
+[node name="SeparationLine" type="Line2D" parent="."]
+visible = false
+points = PackedVector2Array(0, 0, 5, 0)
+width = 0.1
+default_color = Color(0.643137, 0.0509804, 0, 1)
+
+[connection signal="timeout" from="WanderTimer" to="." method="_on_wander_timer_timeout"]

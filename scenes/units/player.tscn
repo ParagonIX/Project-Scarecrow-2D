@@ -1,9 +1,8 @@
-[gd_scene load_steps=16 format=3 uid="uid://ceex3p066a2gl"]
+[gd_scene load_steps=14 format=3 uid="uid://ceex3p066a2gl"]
 
 [ext_resource type="Script" path="res://sripts/player.gd" id="1_swmtk"]
 [ext_resource type="Texture2D" uid="uid://c13q2m5yxo668" path="res://assets/textures/units/player/player_idle.png" id="2_0wpbf"]
 [ext_resource type="Texture2D" uid="uid://cql7jx48tysec" path="res://assets/textures/units/player/player_run.png" id="3_fuymv"]
-[ext_resource type="Script" path="res://sripts/Label.gd" id="4_sbkfr"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4k700"]
 size = Vector2(7, 5)
@@ -454,10 +453,10 @@ _data = {
 "run_up": SubResource("Animation_r1cch")
 }
 
-[sub_resource type="LabelSettings" id="LabelSettings_r2mjn"]
-font_size = 8
-
 [node name="player" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 7
+motion_mode = 1
 script = ExtResource("1_swmtk")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
@@ -480,13 +479,3 @@ libraries = {
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(5, 5)
-
-[node name="Label" type="Label" parent="."]
-offset_left = -29.0
-offset_top = -20.0
-offset_right = 30.0
-offset_bottom = 6.0
-text = "FPS: 3"
-label_settings = SubResource("LabelSettings_r2mjn")
-horizontal_alignment = 1
-script = ExtResource("4_sbkfr")

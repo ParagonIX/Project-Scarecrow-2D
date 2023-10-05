@@ -50,7 +50,7 @@ const WHEAT_ALTLAS_COORD : Vector2i = Vector2i(21, 10)
 const WHEAT_STAGES_QT : int = 4
 
 signal wheat_cycle_complete
-
+signal map_tile_added(tile_data)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():	
@@ -92,6 +92,7 @@ func get_random_tile_type():
 
 func place_tile(tile: TileInfo):
 	level.append(tile)
+	emit_signal("map_tile_added", tile)
 	possible_new_tile_positions.erase(tile.position)
 	
 	match tile.tile_type:

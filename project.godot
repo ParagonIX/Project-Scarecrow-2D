@@ -80,6 +80,19 @@ warp_jump={
 ]
 }
 
+[layer_names]
+
+2d_render/layer_1="Level"
+2d_render/layer_2="Player"
+2d_render/layer_3="LowProps"
+2d_render/layer_4="HighProps"
+2d_render/layer_5="Crows"
+2d_physics/layer_1="Level"
+2d_physics/layer_2="Player"
+2d_physics/layer_3="LowProps"
+2d_physics/layer_4="HighProps"
+2d_physics/layer_5="Crows"
+
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0

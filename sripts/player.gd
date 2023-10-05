@@ -7,7 +7,6 @@ extends CharacterBody2D
 
 @onready var animation_player = $AnimationPlayer
 @onready var tile_map : TileMap = $"../TileMap"
-@onready var label = $Label
 
 var speed_mod_layer = 0
 
@@ -18,6 +17,7 @@ enum orientation {
 	RIGHT,
 }
 var facing = orientation.DOWN 
+
 
 func _physics_process(delta):
 	# Get the input direction and handle the movement/deceleration.
@@ -95,7 +95,7 @@ func warp_jump(direction):
 	var move_dir = (global_position - old_position).normalized()
 	push_out_of_obstacles(move_dir)
 	
-		
+	
 func push_out_of_obstacles(arrival_vector: Vector2):
 	if arrival_vector == Vector2.ZERO:
 		return
@@ -110,7 +110,8 @@ func push_out_of_obstacles(arrival_vector: Vector2):
 		if level_bounds_reached(arrival_vector):
 			push_back(arrival_vector)
 			push_out_of_obstacles (arrival_vector)
-		
+	
+	
 func push_back(push_dir : Vector2):
 	global_position += -push_dir.normalized() * push_out_distance
 	

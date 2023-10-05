@@ -1,10 +1,12 @@
-[gd_scene load_steps=9 format=3 uid="uid://b86erl32wwrb0"]
+[gd_scene load_steps=11 format=3 uid="uid://b86erl32wwrb0"]
 
 [ext_resource type="Script" path="res://sripts/game_manager.gd" id="1_5t2kx"]
 [ext_resource type="Texture2D" uid="uid://dv0viib1w06x" path="res://assets/textures/terrain/Terrain_tileset.png" id="2_n45en"]
 [ext_resource type="Texture2D" uid="uid://dg1sjcpp0wjd2" path="res://assets/textures/props/SmallBurg_outside_assets.png" id="2_o4enh"]
-[ext_resource type="PackedScene" uid="uid://ceex3p066a2gl" path="res://scenes/player.tscn" id="3_iauia"]
+[ext_resource type="PackedScene" uid="uid://ceex3p066a2gl" path="res://scenes/units/player.tscn" id="3_iauia"]
 [ext_resource type="Script" path="res://sripts/map_manager.gd" id="3_snnde"]
+[ext_resource type="Script" path="res://sripts/flock_manager.gd" id="6_cn48h"]
+[ext_resource type="PackedScene" uid="uid://ciprrrjbojbc6" path="res://scenes/game_ui.tscn" id="8_k6k7b"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_1qpi6"]
 texture = ExtResource("2_o4enh")
@@ -3516,7 +3518,24 @@ sources/0 = SubResource("TileSetAtlasSource_1qpi6")
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_5t2kx")
+wheat_growth_time = 3.0
 new_tile_spawn_time = 1.0
+coin_worth = 1
+
+[node name="FlockManager" type="Node2D" parent="."]
+script = ExtResource("6_cn48h")
+crow_spawn_time = 1
+wander_reset_time = 2.0
+max_crow_speed = 50.0
+max_crow_count = 100.0
+cohesion_weight = 2.0
+alignment_weight = 3.0
+separation_weight = 2.0
+bounds_weight = 10.0
+wander_weight = 2.0
+
+[node name="CrowSpawnTimer" type="Timer" parent="FlockManager"]
+autostart = true
 
 [node name="TileMap" type="TileMap" parent="."]
 texture_filter = 1
@@ -3557,4 +3576,7 @@ position = Vector2(24, 24)
 
 [node name="Tile_Spawn_Timer" type="Timer" parent="."]
 
+[node name="GameUI" parent="." instance=ExtResource("8_k6k7b")]
+
+[connection signal="timeout" from="FlockManager/CrowSpawnTimer" to="FlockManager" method="_on_crow_spawn_timer_timeout"]
 [connection signal="timeout" from="Tile_Spawn_Timer" to="TileMap" method="_on_tile_spawn_timer_timeout"]
