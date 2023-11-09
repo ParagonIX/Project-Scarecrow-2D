@@ -11,6 +11,7 @@ extends Node2D
 @export_group('Crow Parameters')
 @export var max_crow_speed: float
 @export var max_crow_count: float
+@export var tree_vision_range: float
 @export_group('')
 
 @export_group('Behavior Weights')

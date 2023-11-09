@@ -3524,14 +3524,15 @@ coin_worth = 1
 
 [node name="FlockManager" type="Node2D" parent="."]
 script = ExtResource("6_cn48h")
-crow_spawn_time = 1
-wander_reset_time = 2.0
-max_crow_speed = 50.0
+crow_spawn_time = 3
+wander_reset_time = 3.0
+max_crow_speed = 35.0
 max_crow_count = 100.0
+tree_vision_range = 32.0
 cohesion_weight = 2.0
 alignment_weight = 3.0
-separation_weight = 2.0
-bounds_weight = 10.0
+separation_weight = 3.0
+bounds_weight = 5.0
 wander_weight = 2.0
 
 [node name="CrowSpawnTimer" type="Timer" parent="FlockManager"]

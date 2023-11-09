@@ -11,8 +11,8 @@ class_name Crow
 @onready var tile_map: TileMap = $"../../TileMap"
 @onready var neigbour_radius = $NeigbourRadius
 @onready var wander_timer : Timer = $WanderTimer
+
 @onready var wander_line = $WanderLine
-@onready var crow_sprite = $CrowSprite
 @onready var cohesion_line = $CohesionLine
 @onready var alignment_line = $AlignmentLine
 @onready var separation_line = $SeparationLine
@@ -23,6 +23,7 @@ var alignment_weight: float
 var separation_weight: float
 var bounds_weight: float
 var wander_weight: float
+var tree_vision_range: float
 var wander_velocity: Vector2
 var visible_flock: Array = []
 
@@ -38,6 +39,7 @@ func _ready():
 	separation_weight = flock_manager.separation_weight
 	bounds_weight = flock_manager.bounds_weight
 	wander_timer.wait_time = flock_manager.wander_reset_time
+	tree_vision_range = flock_manager.tree_vision_range
 	velocity = Vector2(randf_range(-1, 1), randf_range(-1, 1)).normalized() * max_crow_speed
 	animation_player.play("crow_flying")
 	
@@ -61,6 +63,7 @@ func _physics_process(delta):
 	flock()
 	stay_in_bounds()
 	wander()
+	avoid_trees()
 	if velocity.length() > max_crow_speed:
 		velocity = velocity.normalized() * max_crow_speed
 	move_and_slide()
@@ -115,17 +118,20 @@ func stay_in_bounds():
 	var bottom_edge = tile_map.map_to_local(level_bounds.position + level_bounds.size).y
 	var margin = BOUNDS_RADIUS
 
-	if global_position.x < left_edge - margin or global_position.x > right_edge + margin:
-		velocity.x = -velocity.x
-		wander_velocity = get_random_velocity(wander_weight)
-		wander_timer.stop()
-		wander_timer.start()
-
-	if global_position.y < top_edge - margin or global_position.y > bottom_edge + margin:
-		velocity.y = -velocity.y
-		wander_velocity = get_random_velocity(wander_weight)
-		wander_timer.stop()
-		wander_timer.start()
+	if global_position.x < left_edge - margin:
+		velocity.x += 1 * bounds_weight
+		#wander_velocity = get_random_velocity(wander_weight)
+		#wander_timer.stop()
+		#wander_timer.start()
+		
+	elif global_position.x > right_edge + margin:
+		velocity.x -= 1 * bounds_weight
+		
+	if global_position.y < top_edge - margin:
+		velocity.y += 1 * bounds_weight
+		
+	elif global_position.y > bottom_edge + margin:
+		velocity.y -= 1 * bounds_weight
 
 	# Limit the boid's speed
 	if velocity.length() > max_crow_speed:
@@ -153,3 +159,20 @@ func _on_wander_timer_timeout():
 
 func get_random_velocity(weight):
 	return Vector2(randf_range(-1, 1), randf_range(-1, 1)) * weight
+
+
+func avoid_trees():
+	var tree_top_positions: Array[Vector2i] = []
+	for tile in tile_map.level:
+		if tile.tile_type == tile_map.tile_types.TREE:
+			tree_top_positions.append(Vector2i(tile.position.x, tile.position.y - 1))
+			
+	var visible_tree_tops : Array[Vector2i] = []
+	for tree_top in tree_top_positions:
+		if global_position.distance_to(tile_map.map_to_local(tree_top)) < tree_vision_range and tree_top not in visible_tree_tops:
+			visible_tree_tops.append(tree_top)
+			
+	for tree_top_location in visible_tree_tops:
+		var direction_from_tree : Vector2 = global_position - tile_map.map_to_local(tree_top_location)
+		var tree_repulsion : Vector2 = direction_from_tree.normalized() / (direction_from_tree.length() + 0.01) * 20
+		velocity += tree_repulsion
